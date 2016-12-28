@@ -32,5 +32,6 @@ def delete_indexes(indexes):
 
 if __name__ == '__main__':
     import config
-    delete_indexes(config.Config().get_indexes())
+    #delete_indexes(config.Config().get_indexes())
+    print get_indexes()
 

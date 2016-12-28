@@ -5,12 +5,15 @@ from config import Config
 
 
 def deploy_inputs():
-    print "Creating accounts\n================"
-    n = create_accounts(Config().get_accounts())
-    print "Created %d accounts\n================" % n
-    print "Creating indexes\n================="
-    n = create_indexes(Config().get_indexes())
-    print "Created %d indexes\n================" % n
+#    print "Creating accounts\n================"
+#    n = create_accounts(Config().get_accounts())
+#    print "Created %d accounts\n================" % n
+#    print "Creating indexes\n================="
+#    n = create_indexes(Config().get_indexes())
+#    print "Created %d indexes\n================" % n
+#    print "Creaging inputs\n=================="
+    n = create_inputs(Config().get_inputs())
+    print "Create %d inputs\n==================" % n
 
 if __name__ == '__main__':
     deploy_inputs()

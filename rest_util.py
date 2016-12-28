@@ -8,7 +8,7 @@ import logging
 import config
 from os.path import join, dirname
 
-logging.basicConfig(filename=join(dirname(__file__), 'request.log'), format='%(asctime)s %(filename)s %(levelname)s %(message)s', level=logging.DEBUG)
+logging.basicConfig(filename=join(dirname(__file__), 'request2.log'), format='%(asctime)s %(filename)s %(levelname)s %(message)s', level=logging.DEBUG)
 
 class MyRequest(object):
     def __init__(self, authority, username, password):
@@ -22,7 +22,7 @@ class MyRequest(object):
         if data:
             body = urllib.urlencode(data)
 
-        logging.debug('rest %s %s' % (method, (self.authority + path_segment)))
+        logging.debug('rest %s %s. data: %s' % (method, (self.authority + path_segment), data))
         req = urllib2.Request(self.authority + path_segment, body)
         req.add_header("Authorization", self.token)
         req.get_method = lambda: method # set 'DELETE' request. Using HttpLib to make 'DELETE' request is more common
@@ -37,7 +37,7 @@ class MyRequest(object):
         values = {'username':self.username,
                 'password':self.password}
         data = urllib.urlencode(values)
-        logging.debug('POST url: %s/services/auth/login' % self.authority)
+        logging.debug('rest POST %s/services/auth/login' % self.authority)
         request = urllib2.Request(self.authority + '/services/auth/login', data=data)
 
         auth = base64.b64encode("%s:%s" % (self.username, self.password))
@@ -58,6 +58,5 @@ auth = config.Config().get_auth()
 my_request = MyRequest(auth['authority'], auth['username'], auth['password'])
 
 if __name__ == '__main__':
-    #_get_session_key("https://saas-jsui-m1:8089", "admin", "changed")
     print my_request.request('/servicesNS/nobody/Splunk_TA_aws/splunk_ta_aws/inputs/config').read()
     pass

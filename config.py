@@ -3,6 +3,7 @@ import re
 auth_pat = '\[auth\]'
 account_pat = '\[account:(?P<name>[\w-]+)\]'
 index_pat = '\[index\]'
+input_pat = '\[(?P<kind>[\w-]+)://(?P<name>[\w-]+)\]'
 
 stanza_header = '\['
 
@@ -12,6 +13,7 @@ class Config(object):
             self.accounts = []
             self.auth = {}
             self.indexes = []
+            self.inputs = {}
             with open('config.conf', 'r') as reader:
                 while True:
                     line = reader.readline()
@@ -33,6 +35,22 @@ class Config(object):
                         self.indexes = self._get_indexes(reader)
                     else:
                         pass
+            
+            with open('inputs.conf', 'r') as reader:
+                while True:
+                    line = reader.readline()
+                    if line == '':
+                        break
+                    line = line.strip()
+                    if re.match('#', line):
+                        continue
+                    elif re.match(input_pat, line):
+                        m = re.search(input_pat, line)
+                        kind = m.group('kind')
+                        name = m.group('name')
+                        input = self._get_kv_pairs(reader)
+                        one_input = {name:input}
+                        self.inputs[kind] = one_input
 
         def get_auth(self):
             return self.auth
@@ -42,6 +60,9 @@ class Config(object):
 
         def get_indexes(self):
             return self.indexes
+
+        def get_inputs(self):
+            return self.inputs
 
         def _get_kv_pairs(self, reader):
             line = reader.readline()
