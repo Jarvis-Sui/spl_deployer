@@ -22,8 +22,8 @@ class MyRequest(object):
         if data:
             body = urllib.urlencode(data)
 
-        logging.debug('rest %s %s' % (method, (self.authority + path_segment)))
-        req = urllib2.Request(self.authority + path_segment, body)
+        logging.debug('rest %s %s. data: %s' % (method, (self.authority + path_segment), data))
+        req = urllib2.Request(self.authority + path_segment + '?count=-1', body)
         req.add_header("Authorization", self.token)
         req.get_method = lambda: method # set 'DELETE' request. Using HttpLib to make 'DELETE' request is more common
         ctx = ssl._create_unverified_context()
@@ -37,7 +37,7 @@ class MyRequest(object):
         values = {'username':self.username,
                 'password':self.password}
         data = urllib.urlencode(values)
-        logging.debug('POST url: %s/services/auth/login' % self.authority)
+        logging.debug('rest POST %s/services/auth/login' % self.authority)
         request = urllib2.Request(self.authority + '/services/auth/login', data=data)
 
         auth = base64.b64encode("%s:%s" % (self.username, self.password))
@@ -58,6 +58,5 @@ auth = config.Config().get_auth()
 my_request = MyRequest(auth['authority'], auth['username'], auth['password'])
 
 if __name__ == '__main__':
-    #_get_session_key("https://saas-jsui-m1:8089", "admin", "changed")
     print my_request.request('/servicesNS/nobody/Splunk_TA_aws/splunk_ta_aws/inputs/config').read()
     pass

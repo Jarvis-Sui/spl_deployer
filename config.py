@@ -3,6 +3,7 @@ import re
 auth_pat = '\[auth\]'
 account_pat = '\[account:(?P<name>[\w-]+)\]'
 index_pat = '\[index\]'
+input_pat = '\[(?P<kind>[\w-]+)://(?P<name>[\w-]+)\]'
 
 stanza_header = '\['
 
@@ -12,6 +13,7 @@ class Config(object):
             self.accounts = []
             self.auth = {}
             self.indexes = []
+            self.inputs = {}
             with open('config.conf', 'r') as reader:
                 while True:
                     line = reader.readline()
@@ -33,6 +35,23 @@ class Config(object):
                         self.indexes = self._get_indexes(reader)
                     else:
                         pass
+            
+            with open('inputs.conf', 'r') as reader:
+                while True:
+                    line = reader.readline()
+                    if line == '':
+                        break
+                    line = line.strip()
+                    if re.match('#', line):
+                        continue
+                    elif re.match(input_pat, line):
+                        m = re.search(input_pat, line)
+                        kind = m.group('kind')
+                        name = m.group('name')
+                        input = self._get_kv_pairs(reader)
+                        if kind not in self.inputs:
+                            self.inputs[kind] = {}
+                        self.inputs[kind][name] = input
 
         def get_auth(self):
             return self.auth
@@ -42,6 +61,9 @@ class Config(object):
 
         def get_indexes(self):
             return self.indexes
+
+        def get_inputs(self):
+            return self.inputs
 
         def _get_kv_pairs(self, reader):
             line = reader.readline()
@@ -60,7 +82,7 @@ class Config(object):
             line = reader.readline()
             indexes = []
             while line != '' and not re.match(stanza_header, line):
-                if not re.match('#', line):
+                if not re.match('#', line) and line.strip() != '':
                     indexes.append(line.strip())
                 line = reader.readline()
             reader.seek(-len(line), 1)

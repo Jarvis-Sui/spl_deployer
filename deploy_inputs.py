@@ -1,4 +1,4 @@
-from account_manager import create_accounts
+from account_manager import create_accounts 
 from index_manager import create_indexes
 from input_manager import create_inputs
 from config import Config
@@ -11,6 +11,10 @@ def deploy_inputs():
     print "Creating indexes\n================="
     n = create_indexes(Config().get_indexes())
     print "Created %d indexes\n================" % n
+    print "Creating inputs\n=================="
+    #print Config().get_inputs()
+    n = create_inputs(Config().get_inputs())
+    print "Create %d inputs\n==================" % n
 
 if __name__ == '__main__':
     deploy_inputs()
