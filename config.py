@@ -49,8 +49,9 @@ class Config(object):
                         kind = m.group('kind')
                         name = m.group('name')
                         input = self._get_kv_pairs(reader)
-                        one_input = {name:input}
-                        self.inputs[kind] = one_input
+                        if kind not in self.inputs:
+                            self.inputs[kind] = {}
+                        self.inputs[kind][name] = input
 
         def get_auth(self):
             return self.auth
@@ -81,7 +82,7 @@ class Config(object):
             line = reader.readline()
             indexes = []
             while line != '' and not re.match(stanza_header, line):
-                if not re.match('#', line):
+                if not re.match('#', line) and line.strip() != '':
                     indexes.append(line.strip())
                 line = reader.readline()
             reader.seek(-len(line), 1)

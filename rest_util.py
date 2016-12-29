@@ -8,7 +8,7 @@ import logging
 import config
 from os.path import join, dirname
 
-logging.basicConfig(filename=join(dirname(__file__), 'request2.log'), format='%(asctime)s %(filename)s %(levelname)s %(message)s', level=logging.DEBUG)
+logging.basicConfig(filename=join(dirname(__file__), 'request.log'), format='%(asctime)s %(filename)s %(levelname)s %(message)s', level=logging.DEBUG)
 
 class MyRequest(object):
     def __init__(self, authority, username, password):
@@ -23,7 +23,7 @@ class MyRequest(object):
             body = urllib.urlencode(data)
 
         logging.debug('rest %s %s. data: %s' % (method, (self.authority + path_segment), data))
-        req = urllib2.Request(self.authority + path_segment, body)
+        req = urllib2.Request(self.authority + path_segment + '?count=-1', body)
         req.add_header("Authorization", self.token)
         req.get_method = lambda: method # set 'DELETE' request. Using HttpLib to make 'DELETE' request is more common
         ctx = ssl._create_unverified_context()

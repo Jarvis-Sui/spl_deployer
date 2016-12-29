@@ -13,10 +13,14 @@ def create_inputs(inputs):
         for name, data in one_inputs.iteritems():
             if validate_input(name, data):
                 new_name = build_name(name, kind, data)
-                create_input(new_name, kind, data)
-                count += 1
+                try:
+                    create_input(new_name, kind, data)
+                    count += 1
+                except Exception as err:
+                    logging.error("Failed to create input '%s' of kind '%s'. %s" %(name, kind, str(err)))
+                    print "Failed to create input '%s' of kind '%s'. For more info, see log file." %(name, kind)
             else:
-                logging.warning("%s not created. Check whether account and index exist." % name)
+                logging.warning("'%s' of kind '%s' not created. Check whether account and index exist." % (name, kind))
     return count
 
 def create_input(name, kind, data):
@@ -29,11 +33,12 @@ def create_input(name, kind, data):
 def delete_input(name, kind):
     endpoint = IS.AWS_INPUT_ROOT + "/" + kind + "/" + name
     response = my_request.request(endpoint, method = 'DELETE')
-    logging.debug('%s of %s deleted' % (input_name, kind))
+    logging.debug('%s of %s deleted' % (name, kind))
 
 def delete_all_inputs():
-    for input_name in get_all_input_names():
-        delete_input(input_name, kind)
+    for kind in get_input_kinds():
+        for input_name in get_input_names(kind):
+            delete_input(input_name, kind)
 
 def get_input_kinds():
     kinds = []
@@ -60,7 +65,6 @@ def get_all_input_names():
         input_names.extend(get_input_names(kind))
     return input_names
 
-
 def validate_input(name, data):
     # check input name, account and index
     # exist_inputs = get_all_input_names()
@@ -75,39 +79,23 @@ def build_name(name, kind, data):
     return '_'.join([data['aws_account'], kind, name, datetime.today().strftime("%Y%m%d%H%M%S")])
 
 if __name__ == '__main__':
-    #data = {
-    #        'sourcetype': 'aws:cloudwatch',
-    #        'index': 'main',
-    #        'aws_account': 'jarvis2',
-    #        'metric_namespace': 'AWS/EC2',
-    #        'metric_names': '".*"',
-    #        'metric_dimensions': '[{"instanceID":[".*"]}]',
-    #        'period': 600,
-    #        'polling_interval': 7200,
-    #        'statistics': '["Average", "Sum", "Maximum", "Minimum"]',
-    #        'aws_regions': 'ap-southeast-1,ap-northeast-2'
-    #        }
-    #create_input('cloudwatch-rest', 'cloudwatch', data)
-
-    #import input_settings as IS
-    inputs = {
-            IS.AWS_INPUT_CLOUDWATCH:{ # kind
-                'rest1':{ # name
-                    'sourcetype': 'aws:cloudwatch',
-                    'index': 'main',
-                    'aws_account': 'jarvis',
-                    #'aws_iam_role': '',
-                    'metric_namespace': 'AWS/EC2',
-                    'metric_names': '".*"',
-                    'metric_dimensions': '[{"InstanceID":[".*"]}]',
-                    'period': '600',
-                    'polling_interval': '7200',
-                    'statistics': '["Average", "Sum", "Maximum", "Minimum"]',
-                    'aws_regions': 'ap-southeast-1,ap-northeast-2'
-                    }
-                }
-    }
-    create_inputs(inputs)
-
-    #delete_input('cloudwatchlogs_4', IS.AWS_INPUT_CLOUDWATCH_LOGS)
-    #print get_all_input_names()
+    # inputs = {
+    #         IS.AWS_INPUT_CLOUDWATCH:{ # kind
+    #             'rest1':{ # name
+    #                 'sourcetype': 'aws:cloudwatch',
+    #                 'index': 'main',
+    #                 'aws_account': 'jarvis',
+    #                 #'aws_iam_role': '',
+    #                 'metric_namespace': 'AWS/EC2',
+    #                 'metric_names': '".*"',
+    #                 'metric_dimensions': '[{"InstanceID":[".*"]}]',
+    #                 'period': '600',
+    #                 'polling_interval': '7200',
+    #                 'statistics': '["Average", "Sum", "Maximum", "Minimum"]',
+    #                 'aws_regions': 'ap-southeast-1,ap-northeast-2'
+    #                 }
+    #             }
+    # }
+    # create_inputs(inputs)
+    # print get_input_kinds()
+    delete_all_inputs()
