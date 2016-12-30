@@ -13,9 +13,16 @@ secret_key = my_secret_key
 # 4: China
 category = 1
 
-[index]
+[indexes]
 # specify indexes to be added to or deleted from splunk
 index_1
 index_2
 index_3
 index_4
+
+[input_files]
+# specify input conf files. Files should be in the form of filename.conf, and be put in inputs/ dir.
+# ONLY list filename here, don't append '.conf' suffix
+input_file_1
+input_file_2
+

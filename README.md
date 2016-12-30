@@ -1,3 +1,5 @@
+# How to USE
+Configure in config.conf, and run `python deploy_input.py`.
 
 # deploy\_input
 Program entry point. Run `python deploy_input.py` to create account, indexes and inputs. You can also use functions in *account|indexes|input\_manager* to customize your own deployment.
@@ -17,8 +19,8 @@ Make REST calls
 2. specify aws accounts
 3. specify indexes that need to be created
 
-# inputs.conf
-specify inputs. This conf file is similar to the splunk's inputs.conf file, but some keys are different and no default value is provided if a key is not assigned a value.
+# inputs 
+Containing input conf files. Input conf file is similar to the splunk's inputs.conf file, but some keys are different and no default value is provided if a key is not assigned a value.
 
 # log
 Log is written to request.log under the same folder.

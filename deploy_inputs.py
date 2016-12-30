@@ -1,6 +1,6 @@
-from account_manager import create_accounts 
-from index_manager import create_indexes
-from input_manager import create_inputs
+from account_manager import create_accounts, delete_all_accounts
+from index_manager import create_indexes, delete_indexes
+from input_manager import create_inputs, delete_all_inputs
 from config import Config
 
 
@@ -15,6 +15,11 @@ def deploy_inputs():
     #print Config().get_inputs()
     n = create_inputs(Config().get_inputs())
     print "Create %d inputs\n==================" % n
+
+def clear_all():
+    delete_all_inputs()
+    delete_all_accounts()
+    delete_indexes(Config().get_indexes())
 
 if __name__ == '__main__':
     deploy_inputs()
